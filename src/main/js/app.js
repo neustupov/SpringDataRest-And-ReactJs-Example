@@ -54,7 +54,7 @@ class App extends React.Component {
     }
 
     onCreate(newEmployee) {
-        var self = this;
+        const self = this;
         follow(client, root, ['employees']).then(response => {
             return client({
                 method: 'POST',
@@ -63,8 +63,7 @@ class App extends React.Component {
                 headers: {'Content-Type': 'application/json'}
             })
         }).then(response => {
-            return follow(client, root, [
-                {rel: 'employees', params: {'size': self.state.pageSize}}]);
+            return follow(client, root, [{rel: 'employees', params: {'size': self.state.pageSize}}]);
         }).done(response => {
             if (typeof response.entity._links.last != "undefined") {
                 this.onNavigate(response.entity._links.last.href);
@@ -142,14 +141,13 @@ class App extends React.Component {
                               links={this.state.links}
                               pageSize={this.state.pageSize}
                               attributes={this.state.attributes}
-                              onUpdate={this.onUpdate}
                               onNavigate={this.onNavigate}
+                              onUpdate={this.onUpdate}
                               onDelete={this.onDelete}
                               updatePageSize={this.updatePageSize}/>
             </div>
         )
     }
-
 }
 
 class CreateDialog extends React.Component {
@@ -166,13 +164,9 @@ class CreateDialog extends React.Component {
             newEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
         });
         this.props.onCreate(newEmployee);
-
-        // clear out the dialog's inputs
         this.props.attributes.forEach(attribute => {
             ReactDOM.findDOMNode(this.refs[attribute]).value = '';
         });
-
-        // Navigate away from the dialog to hide it.
         window.location = "#";
     }
 
@@ -182,7 +176,6 @@ class CreateDialog extends React.Component {
                 <input type="text" placeholder={attribute} ref={attribute} className="field"/>
             </p>
         );
-
         return (
             <div>
                 <a href="#createEmployee">Create</a>
@@ -213,7 +206,7 @@ class UpdateDialog extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        var updatedEmployee = {};
+        const updatedEmployee = {};
         this.props.attributes.forEach(attribute => {
             updatedEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
         });
@@ -222,7 +215,7 @@ class UpdateDialog extends React.Component {
     }
 
     render() {
-        var inputs = this.props.attributes.map(attribute =>
+        const inputs = this.props.attributes.map(attribute =>
             <p key={this.props.employee.entity[attribute]}>
                 <input type="text" placeholder={attribute}
                        defaultValue={this.props.employee.entity[attribute]}
@@ -230,7 +223,7 @@ class UpdateDialog extends React.Component {
             </p>
         );
 
-        var dialogId = "updateEmployee-" + this.props.employee.entity._links.self.href;
+        const dialogId = "updateEmployee-" + this.props.employee.entity._links.self.href;
 
         return (
             <div key={this.props.employee.entity._links.self.href}>
@@ -270,33 +263,28 @@ class EmployeeList extends React.Component {
         if (/^[0-9]+$/.test(pageSize)) {
             this.props.updatePageSize(pageSize);
         } else {
-            ReactDOM.findDOMNode(this.refs.pageSize).value =
-                pageSize.substring(0, pageSize.length - 1);
+            ReactDOM.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
         }
     }
 
-    handleNavFirst(e) {
+    handleNavFirst(e){
         e.preventDefault();
         this.props.onNavigate(this.props.links.first.href);
     }
-
     handleNavPrev(e) {
         e.preventDefault();
         this.props.onNavigate(this.props.links.prev.href);
     }
-
     handleNavNext(e) {
         e.preventDefault();
         this.props.onNavigate(this.props.links.next.href);
     }
-
     handleNavLast(e) {
         e.preventDefault();
         this.props.onNavigate(this.props.links.last.href);
     }
-
     render() {
-        var employees = this.props.employees.map(employee =>
+        const employees = this.props.employees.map(employee =>
             <Employee key={employee.entity._links.self.href}
                       employee={employee}
                       attributes={this.props.attributes}
@@ -304,7 +292,7 @@ class EmployeeList extends React.Component {
                       onDelete={this.props.onDelete}/>
         );
 
-        var navLinks = [];
+        const navLinks = [];
         if ("first" in this.props.links) {
             navLinks.push(<button key="first" onClick={this.handleNavFirst}>&lt;&lt;</button>);
         }
@@ -355,9 +343,9 @@ class Employee extends React.Component {
     render() {
         return (
             <tr>
-                <td>{this.props.employee.firstName}</td>
-                <td>{this.props.employee.lastName}</td>
-                <td>{this.props.employee.description}</td>
+                <td>{this.props.employee.entity.firstName}</td>
+                <td>{this.props.employee.entity.lastName}</td>
+                <td>{this.props.employee.entity.description}</td>
                 <td>
                     <UpdateDialog employee={this.props.employee}
                                   attributes={this.props.attributes}
